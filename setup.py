@@ -27,6 +27,7 @@ exec(open('extras/sageRegina/version.py').read())
 exec(open('extras/sageRegina/config.py').read())
 
 import glob, os, sys
+import shutil
 
 # Some of this is copied from SnapPy
 
@@ -75,7 +76,7 @@ def tokyocabinet_predicate(file_path):
 platform_extra_compile_args = []
 platform_extra_link_args = []
 if sys.platform == 'darwin':
-    platform_extra_compile_args = ['-mmacosx-version-min=10.9']
+    platform_extra_compile_args = ['-mmacosx-version-min=10.15']
     platform_extra_link_args = ['-Lextlib', '-liconv', '-Wl,-exported_symbols_list,exported_symbols']
 elif sys.platform.startswith('linux'):
     platform_extra_link_args = ['-s']
@@ -277,6 +278,7 @@ class package_untar(CompoundCommand):
 class package_clone_regina(SystemCommand):
     system_commands = ['git clone %s regina_cloned' % (regina_uri)]
 
+
 class package_fetch_regina(SystemCommand):
     system_commands = ['cd regina_*; git fetch']
 
@@ -285,13 +287,25 @@ class package_checkout_regina(SystemCommand):
         'rm -rf regina_0000000',
         'mv regina_cloned regina_0000000',
         'cd regina_0000000; git reset --hard',
-        'cd regina_0000000; git checkout %s' % regina_hash,
+        'cd regina_0000000; git checkout %s' % regina_tag,
         'mv regina_0000000 %s' % regina_dir
         ]
 
 class package_patch_regina(SystemCommand):
     system_commands = [
-        'cd regina_*; git apply ../patches/regina.diff']
+        'cd regina_*; git apply ../patches/regina.diff'
+        ]
+
+## added 5/8/26 so that regina will work with python 3.11. Replaces reginas bundled Pybind11 with updated version.
+
+class package_pybind11(SystemCommand):
+    system_commands = [
+        'rm -rf %s/python/pybind11' % regina_dir,
+        'cp -R extras/pybind11/include/pybind11 %s/python/pybind11' % regina_dir
+        ]
+
+
+
 
 class package_retrieve_tokyocabinet(CompoundCommand):
     commands = [
@@ -309,7 +323,8 @@ class package_retrieve_regina(CompoundCommand):
     commands = [
         'package_clone_regina',
         'package_checkout_regina',
-        'package_patch_regina'
+        'package_patch_regina',
+        'package_pybind11'
         ]
 
 class package_retrieve(CompoundCommand):
@@ -333,8 +348,8 @@ class package_extras(CompoundCommand):
 
 class package_move_info(SystemCommand):
     system_commands = [
-        'mv regina.egg-info/PKG-INFO .',
-        'rm -rf regina.egg-info'
+        'mv regina6.egg-info/PKG-INFO .',
+        'rm -rf regina6.egg-info'
         ]
 
 class package_info(CompoundCommand):
@@ -389,6 +404,7 @@ cmdclass = {
     'package_fetch_regina' : package_fetch_regina,
     'package_checkout_regina' : package_checkout_regina,
     'package_patch_regina' : package_patch_regina,
+    'package_pybind11' : package_pybind11,
     'package_retrieve_tokyocabinet': package_retrieve_tokyocabinet,
     'package_retrieve_libxml': package_retrieve_libxml,
     'package_retrieve_regina': package_retrieve_regina,
@@ -403,7 +419,7 @@ cmdclass = {
     'package' : package}
 
 
-setup(name = 'regina',
+setup(name = 'regina6',
       version = version,
       zip_safe = False,
       description = 'Regina-Normal',
