@@ -130,14 +130,28 @@ def regina_predicate(file_path):
         return False
 
     if library_name == 'libnormaliz':
-        # Normaliz needs special behavior.
-        # libnormaliz-templated includes other .cpp files in that
-        # directory which we should not include to avoid clashes
-
-        file_name_base, ext = os.path.splitext(file_name)
-        
-        return not ('nmz_' in file_name_base)
-
+        included_cpp = {
+            'bottom.cpp',
+            'HilbertSeries.cpp',
+            'nmz_integrate.cpp',
+            'nmz_polynomial.cpp',
+            'nmz_integral.cpp',
+            'integer.cpp',
+            'vector_operations.cpp',
+            'matrix.cpp',
+            'sublattice_representation.cpp',
+            'project_and_lift.cpp',
+            'reduction.cpp',
+            'cone_dual_mode.cpp',
+            'descent.cpp',
+            'libnormaliz.cpp',
+            'cone_property.cpp',
+            'list_operations.cpp',
+            'cone.cpp',
+            'simplex.cpp',
+            'full_cone.cpp',
+        }
+        return file_name not in included_cpp
     return True
 
 def regina_python_predicate(file_path):
@@ -293,7 +307,8 @@ class package_checkout_regina(SystemCommand):
 
 class package_patch_regina(SystemCommand):
     system_commands = [
-        'cd regina_*; git apply ../patches/regina.diff'
+        'cd regina_*; git apply ../patches/regina.diff',
+        'cd regina_*; git apply ../patches/regina_python311.diff'
         ]
 
 ## added 5/8/26 so that regina will work with python 3.11. Replaces reginas bundled Pybind11 with updated version.

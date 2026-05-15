@@ -1,0 +1,25 @@
+diff --git a/python/dim3/triangulation3.cpp b/python/dim3/triangulation3.cpp
+index cc5c56acb..d30181286 100644
+--- a/python/dim3/triangulation3.cpp
++++ b/python/dim3/triangulation3.cpp
+@@ -84,7 +84,7 @@ namespace pybind11 { namespace detail {
+                     return_value_policy policy, handle parent) {
+                 // We never convert from C++ back to Python, since the user
+                 // should never directly hold a SnapPyObject type.
+-                return NULL;
++                return pybind11::handle();
+             }
+     };
+ } } // namespace pybind11::detail
+diff --git a/python/gui/pythoninterpreter.cpp b/python/gui/pythoninterpreter.cpp
+index 35d2634c7..180758822 100644
+--- a/python/gui/pythoninterpreter.cpp
++++ b/python/gui/pythoninterpreter.cpp
+@@ -47,7 +47,6 @@
+ #include "../python/pybind11/pybind11.h"
+ #include "../python/pybind11/embed.h"
+ #include <compile.h>
+-#include <eval.h>
+ #include <sysmodule.h>
+ 
+ #ifdef PYTHON_STATIC_LINK

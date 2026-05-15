@@ -1,0 +1,29 @@
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+*.egg
+__pycache__/
+*.pyc
+
+# Local virtual environments
+.venv/
+venv/
+.env/
+
+# Downloaded/extracted dependencies
+tokyocabinet*/
+libxml*/
+
+# Temporary assembled Regina source trees
+regina_regina-*/
+
+# macOS
+.DS_Store
+
+# Local notes
+build_notes.txt
+
+# Editor files
+*.swp
+*.swo
