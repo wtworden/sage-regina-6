@@ -5,6 +5,7 @@ dist/
 *.egg
 __pycache__/
 *.pyc
+PKG-INFO
 
 # Local virtual environments
 .venv/
